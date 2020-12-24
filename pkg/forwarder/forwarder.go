@@ -289,6 +289,7 @@ func NewDefaultForwarder(options *Options) *DefaultForwarder {
 			var err error
 			if optionalRemovalPolicy != nil {
 				domainFolderPath, err = optionalRemovalPolicy.registerDomain(domain)
+				log.Debugf("Path for domain %s: %s", domain, domainFolderPath)
 				if err != nil {
 					log.Errorf("Retry queue storage on disk disabled. Cannot register the domain '%v': %v", domain, err)
 				}

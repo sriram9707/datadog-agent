@@ -36,6 +36,7 @@ func newTransactionsFileStorage(
 	maxSizeInBytes int64,
 	telemetry transactionsFileStorageTelemetry) (*transactionsFileStorage, error) {
 
+	log.Debugf("creating directory for transaction storage: %s", storagePath)
 	if err := os.MkdirAll(storagePath, 0755); err != nil {
 		return nil, err
 	}

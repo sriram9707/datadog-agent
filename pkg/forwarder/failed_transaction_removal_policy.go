@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/DataDog/datadog-agent/pkg/util"
+	"github.com/DataDog/datadog-agent/pkg/util/log"
 	"github.com/hashicorp/go-multierror"
 )
 
@@ -30,6 +31,8 @@ func newFailedTransactionRemovalPolicy(
 	rootPath string,
 	outdatedFileDayCount int,
 	telemetry failedTransactionRemovalPolicyTelemetry) (*failedTransactionRemovalPolicy, error) {
+
+	log.Debugf("creating directory for failed transaction removal policy: %s", rootPath)
 	if err := os.MkdirAll(rootPath, 0755); err != nil {
 		return nil, err
 	}
@@ -49,6 +52,7 @@ func (p *failedTransactionRemovalPolicy) registerDomain(domainName string) (stri
 	if err != nil {
 		return "", err
 	}
+	log.Debugf("Folder path for domain %s: %s", domainName, folder)
 
 	p.telemetry.addRegisteredDomainCount()
 	p.knownDomainFolders[folder] = struct{}{}
