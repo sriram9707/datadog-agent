@@ -222,7 +222,10 @@ func (p *Probe) SendStats(statsdClient *statsd.Client) error {
 		}
 	}
 
-	if err := statsdClient.Gauge(MetricPrefix+".process_resolver.cache_size", float64(len(p.resolvers.ProcessResolver.entryCache)), []string{}, 1.0); err != nil {
+	p.resolvers.ProcessResolver.RLock()
+	count := float64(len(p.resolvers.ProcessResolver.entryCache))
+	p.resolvers.ProcessResolver.RUnlock()
+	if err := statsdClient.Gauge(MetricPrefix+".process_resolver.cache_size", count, []string{}, 1.0); err != nil {
 		return errors.Wrap(err, "failed to send process_resolver cache_size metric")
 	}
 	return nil
