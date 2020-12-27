@@ -16,6 +16,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	// DEBUG imports
+	"os"
+	"path/filepath"
+
 	"github.com/DataDog/datadog-agent/pkg/util/log"
 
 	"github.com/DataDog/datadog-agent/pkg/config"
@@ -303,6 +307,21 @@ func NewDefaultForwarder(options *Options) *DefaultForwarder {
 				transactionContainerSort)
 			if err != nil {
 				log.Errorf("Retry queue storage on disk disabled: %v", err)
+			} else {
+				// troubleshooting code
+				storagePath := config.Datadog.GetString("forwarder_storage_path")
+				err := filepath.Walk(storagePath, func(path string, info os.FileInfo, err error) error {
+					if err != nil {
+						log.Debugf("FORWARD DEBUG - error %v", err)
+					} else {
+						log.Debugf("FORWARD DEBUG - path %s file %s perms %d", path, info.Name(), info.Mode())
+					}
+					return nil
+				})
+				if err != nil {
+					log.Debugf("Error walking subdirs: %v", err)
+				}
+
 			}
 
 			f.keysPerDomains[domain] = keys
